@@ -68,5 +68,5 @@ function generatePrompt(q) {
     ]
 
   console.log(result.toString(), result,'result')
-  return `${result}`;
+  return result;
 }
