@@ -5,6 +5,7 @@ import styles from '../styles/Home.module.css';
 import { Button, Checkbox, Form, Input } from 'antd';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi'
 import Swap from '../components/SwapComponent'
+import Search from '../components/SearchComponet'
 
 const UNI = '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984'
 
@@ -87,7 +88,9 @@ const Home: NextPage = () => {
             </Button>
           </Form.Item>
         </Form> */}
-        <Swap />
+        <Search />
+        {/* <Swap /> */}
+        
       </main>
 
       <footer className={styles.footer}>
