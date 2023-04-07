@@ -43,7 +43,7 @@ export default function Search() {
             value={animalInput}
             onChange={(e) => setAnimalInput(e.target.value)}
           />
-          <input type="submit" value="Generate names" />
+          <input type="submit" value="Generate function" />
         </form>
         <div className=''>{JSON.stringify(result)}</div>
     </div>
