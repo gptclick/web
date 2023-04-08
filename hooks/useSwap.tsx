@@ -14,7 +14,9 @@ import {
   Token
 } from '@uniswap/sdk-core';
 import {
-  Pool
+  Pool,
+  computePoolAddress,
+  FeeAmount
 } from '@uniswap/v3-sdk';
 import ISwapRouterArtifact from '@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json';
 import useWETH from './useWETH';
@@ -36,6 +38,8 @@ const UNI_DECIMALS = 18;
 // WETH - UNI pool with 0.3% fee
 const POOL_ADDRESS = '0x07A4f63f643fE39261140DF5E613b9469eccEC86';
 const ROUTER_ADDRESS = '0xE592427A0AEce92De3Edee1F18E0157C05861564';
+
+const POOL_FACTORY_CONTRACT_ADDRESS ='0x1F98431c8aD98523631AE4a59f267346ea31F984'
 
 //Universal Router
 const Universal_ADDRESS ='0x4648a43B2C14Da09FdF82B161150d3F634f40491'
@@ -64,11 +68,75 @@ const useSwap = () => {
     approve,
     deposit
   } = useWETH();
+
+  const LINK_TOKEN = new Token(
+    137,
+    '0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39',
+    18,
+  )
+
+  const USDC_TOKEN = new Token(
+    137,
+    '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+    6,
+  )
+
+  const currentPoolAddress = computePoolAddress({
+    factoryAddress: POOL_FACTORY_CONTRACT_ADDRESS,
+    tokenA: LINK_TOKEN,
+    tokenB: USDC_TOKEN,
+    fee: FeeAmount.MEDIUM
+
+  })
+
   const poolContract = useContract({
-    address: POOL_ADDRESS,
+    address: currentPoolAddress,
     abi: IUniswapV3PoolArtifact.abi,
     signerOrProvider: provider,
   });
+  console.log(poolContract, 'poolContract', currentPoolAddress)
+
+  const getPoolInfo =async (tokenA: any, tokenB: any, poolFee: any)=> {
+    if (!provider) {
+      throw new Error('No provider')
+    }
+
+    const currentPoolAddress = computePoolAddress({
+      factoryAddress: POOL_FACTORY_CONTRACT_ADDRESS,
+      tokenA: tokenA,
+      tokenB: tokenB,
+      fee:poolFee,
+    })
+
+    const poolContract = new ethers.Contract(
+      currentPoolAddress,
+      IUniswapV3PoolArtifact.abi,
+      provider
+    )
+
+    console.log(currentPoolAddress, poolContract,'poolContract')
+
+    const [token0, token1, fee, tickSpacing, liquidity, slot0] =
+      await Promise.all([
+        poolContract.token0(),
+        poolContract.token1(),
+        poolContract.fee(),
+        poolContract.tickSpacing(),
+        poolContract.liquidity(),
+        poolContract.slot0(),
+      ])
+
+    return {
+      token0,
+      token1,
+      fee,
+      tickSpacing,
+      liquidity,
+      sqrtPriceX96: slot0[0],
+      tick: slot0[1],
+    }
+  }
+
 
   const swap = async (amount: number) => {
     if (!routerContract)
@@ -108,8 +176,8 @@ const useSwap = () => {
       getPoolState(),
     ]);
 
-    const tokenA = new Token(goerli.id, immutables.token0, UNI_DECIMALS);
-    const tokenB = new Token(goerli.id, immutables.token1, WETH_DECIMALS);
+    const tokenA = LINK_TOKEN|| new Token(goerli.id, immutables.token0, UNI_DECIMALS);
+    const tokenB = USDC_TOKEN|| new Token(goerli.id, immutables.token1, WETH_DECIMALS);
 
     const pool = new Pool(
       tokenA,
@@ -163,7 +231,8 @@ const useSwap = () => {
 
   return {
     getQuote,
-    swap
+    swap,
+    getPoolInfo
   };
 };
 

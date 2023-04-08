@@ -8,7 +8,7 @@ export default function Search() {
   async function onSubmit(event: { preventDefault: () => void; }) {
     event.preventDefault();
     try {
-      const response = await fetch("/api/getFunction", {
+      const response = await fetch("/api/getAddress", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
