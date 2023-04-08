@@ -50,7 +50,7 @@ export default async function (req: NextRequest, res: NextResponse) {
       "presence_penalty": 0,
       "frequency_penalty": 0
     });
-    
+
 
     // todo 执行串联的多步操作
     let content = completion.data.choices[0].message?.content
@@ -59,7 +59,7 @@ export default async function (req: NextRequest, res: NextResponse) {
     console.log(content, 'content')
 
     try {
-      content =await JSON.parse(content)
+      content = await JSON.parse(content)
       console.log(content, 'content')
 
     } catch (error) {
@@ -73,30 +73,30 @@ export default async function (req: NextRequest, res: NextResponse) {
       .then(async res => {
         if (content?.[0]?.action == 'swap') {
           const { amount, chain, tokenA, tokenB, } = content?.[0]
-          
-          // res.tokens
-          
-          const findTokenA =await tokens.filter(i => tokenA.toUpperCase() == i.symbol)
-          const findTokenB=await tokens.filter(i => tokenB.toUpperCase() == i.symbol)
-           result = {
+
+          const tokens= res.tokens
+
+          const findTokenA = await tokens.filter(i => tokenA.toUpperCase() == i.symbol)
+          const findTokenB = await tokens.filter(i => tokenB.toUpperCase() == i.symbol)
+          result = {
             defaultInputTokenAddress: findTokenA?.[0]?.address,
             defaultInputAmount: amount,
             defaultOutputTokenAddress: findTokenB?.[0]?.address,
             chain: '',
             chainId: '',
           }
-          console.log(result,'dd')
+          console.log(result, 'dd')
 
-          return  res.status(200).json({ result });
+          return res.status(200).json({ result });
 
-        } 
+        }
 
-        return res.status(200).json({ result:{} });
+        return res.status(200).json({ result: {} });
 
       })
-      .catch(e=>{
-        
-    res.status(200).json({ result:{} });
+      .catch(e => {
+
+        res.status(200).json({ result: {} });
 
       })
   } catch (error) {
