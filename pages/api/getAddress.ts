@@ -91,12 +91,12 @@ export default async function (req: NextRequest, res: NextResponse) {
 
         }
 
-        return res.status(200).json({ result: {} });
+        // return res.status(200).json({ result: {} });
 
       })
       .catch(e => {
 
-        res.status(200).json({ result: {} });
+        res.status(500).json({ result: {} });
 
       })
   } catch (error) {
