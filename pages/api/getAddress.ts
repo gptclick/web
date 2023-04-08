@@ -78,16 +78,16 @@ export default async function (req: NextRequest, res: NextResponse) {
 
           const findTokenA = await tokens.filter(i => tokenA.toUpperCase() == i.symbol)
           const findTokenB = await tokens.filter(i => tokenB.toUpperCase() == i.symbol)
-          result = {
+          // result = 
+          // console.log(result, 'dd')
+
+          return res.status(200).json({ result:{
             defaultInputTokenAddress: findTokenA?.[0]?.address,
             defaultInputAmount: amount,
             defaultOutputTokenAddress: findTokenB?.[0]?.address,
             chain: '',
             chainId: '',
-          }
-          console.log(result, 'dd')
-
-          return res.status(200).json({ result });
+          } });
 
         }
 
