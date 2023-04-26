@@ -69,27 +69,15 @@ export default async function (req: NextRequest, res: NextResponse) {
       })
     }
 
-    // await fetch('https://gateway.ipfs.io/ipns/tokens.uniswap.org',{
-
-    // })
-    //   .then(res => res.json())
-    //   .then(async res => {
-
-
-
-    // console.log(content?.[0]?.action,'action',typeof content)
-
     
     if (content?.[0]?.action == 'swap') {
       const { amount, chain, tokenA, tokenB, } = content?.[0]
 
       
       const tokens = TOKENS.tokens
-      // console.log({ tokens })
 
       const findTokenA = await tokens.filter(i => tokenA.toUpperCase() == i.symbol)
       const findTokenB = await tokens.filter(i => tokenB.toUpperCase() == i.symbol)
-      // console.log(result, 'dd', tokenA.toUpperCase(), findTokenA, findTokenB)
 
       return res.status(200).json({
         result: {
@@ -103,15 +91,6 @@ export default async function (req: NextRequest, res: NextResponse) {
 
     }
 
-    // return res.status(200).json({ result: {} });
-
-    // })
-    // .catch(e => {
-    //   console.log(e, 'error')
-
-    //   res.status(500).json({ result: {} });
-
-    // })
   } catch (error) {
     // Consider adjusting the error handling logic for your use case
     if (error.response) {
