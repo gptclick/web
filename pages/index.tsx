@@ -3,8 +3,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { Button, Checkbox, Form, Input } from 'antd';
-import { useContractWrite, usePrepareContractWrite, useProvider } from 'wagmi'
-import Swap from '../components/SwapComponent'
+// import Swap from '../components/SwapComponent'
 import dynamic from 'next/dynamic'
 
 import { useEffect, useState } from 'react'
@@ -24,12 +23,12 @@ const { Search } = Input;
 
 const Home: NextPage = () => {
 
-  const provider = useProvider();
-
   const [result, setResult] = useState();
 
 
   const searchFn = async (q) => {
+    setResult(undefined);
+
     try {
       const response = await fetch("/api/getAddress", {
         method: "POST",
@@ -52,20 +51,18 @@ const Home: NextPage = () => {
     }
   }
 
-  const onSearch = (value: string) =>{
+  const onSearch = (value: string) => {
     searchFn(value)
-
-  } ;
+  };
 
 
 
   useEffect(() => {
     if (result) {
-      console.log(result,'result')
+      console.log(result, 'result')
     }
   }, [result])
 
- 
 
   return (
     <div className={styles.container}>
@@ -80,19 +77,20 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <ConnectButton />
-        
-        <Search placeholder="请输入你想要执行的操作" onSearch={onSearch} style={{ width: 400,margin:'100px 0' }} />
+
+        <Search placeholder="请输入你想要执行的操作" size="large" onSearch={onSearch} style={{ width: 400, margin: '100px 0' }} />
         {/* <Search /> */}
         {/* <Swap /> */}
 
-        {result && <SwapWidget 
-        // provider={provider}
-        width={500} 
+        {result && <SwapWidget
+          // provider={provider}
+          width={500}
           hideConnectionUI={true}
-          defaultInputTokenAddress={result?.defaultInputTokenAddress}
-          defaultOutputTokenAddress={result?.defaultOutputTokenAddress}
+          permit2={true}
+          defaultInputTokenAddress={result?.defaultInputTokenAddress||'NATIVE'}
+          defaultOutputTokenAddress={result?.defaultOutputTokenAddress || 'NATIVE'}
           defaultInputAmount={result?.defaultInputAmount}
-         brandedFooter={false} />}
+          brandedFooter={false} />}
 
       </main>
 
