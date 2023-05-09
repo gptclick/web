@@ -9,6 +9,14 @@ const nextConfig = {
       '@uniswap/conedison/dist':'@uniswap/conedison'
     }
   },
+  webpack(config) {
+    config.experiments = {
+      asyncWebAssembly: true,
+      layers: true,
+    };
+
+    return config;
+  },
 };
 
 module.exports = nextConfig;
